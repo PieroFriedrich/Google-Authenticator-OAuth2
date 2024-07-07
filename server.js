@@ -1,10 +1,11 @@
 import "dotenv/config.js";
-
 import createError from "http-errors";
 import express from "express";
 import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
+import session from "express-session";
+import passport from "passport";
 import indexRouter from "./routes/index.js";
 
 // Constants
@@ -14,14 +15,28 @@ const port = process.env.PORT || 3000;
 const app = express();
 
 // view engine setup
-app.set("views", path.join("views"));
+app.set("views", path.join(path.resolve(), "views"));
 app.set("view engine", "pug");
 
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(path.join("public")));
+app.use(express.static(path.join(path.resolve(), "public")));
+
+// Session middleware
+app.use(
+  session({
+    secret: "cats",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }, // Set to true in production
+  })
+);
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/", indexRouter);
 

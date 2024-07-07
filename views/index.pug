@@ -1,4 +1,13 @@
-extends layout
-
-block content
-  h1= title
+doctype html
+html
+  head
+    title= title
+  body
+    h1= title
+    if user
+      p Hello #{user.displayName}!
+      p
+        a(href='/logout') Logout
+    else
+      p Hello anonymous
+      a(href=loginUrl) Login
